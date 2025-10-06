@@ -1,0 +1,2 @@
+<!-- Placeholder for favicon.ico - This should be replaced with an actual .ico file -->
+<!-- For now, this is just a placeholder. In a real project, you would use an actual favicon.ico file -->

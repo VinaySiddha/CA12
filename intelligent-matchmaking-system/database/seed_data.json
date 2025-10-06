@@ -1,0 +1,535 @@
+{
+  "users": [
+    {
+      "_id": "sample_user_1",
+      "email": "alice.johnson@university.edu",
+      "hashed_password": "$2b$12$example_hashed_password_1",
+      "profile": {
+        "full_name": "Alice Johnson",
+        "bio": "Computer Science graduate student passionate about machine learning and data science. Always eager to collaborate on challenging projects.",
+        "field_of_study": "Computer Science",
+        "academic_level": "graduate",
+        "university": "Tech University",
+        "learning_preferences": ["visual", "kinesthetic"],
+        "goals": ["Master machine learning algorithms", "Improve coding skills", "Publish research papers"],
+        "timezone": "UTC-8",
+        "profile_picture": "https://example.com/profiles/alice.jpg"
+      },
+      "skills": {
+        "interests": ["Machine Learning", "Data Science", "Python Programming", "Deep Learning", "Statistics"],
+        "strengths": ["Python", "Mathematics", "Data Analysis", "Problem Solving"],
+        "weaknesses": ["Public Speaking", "Research Writing", "Time Management"],
+        "certifications": ["AWS Machine Learning Specialty", "Google Data Analytics"],
+        "programming_languages": ["Python", "R", "SQL", "Java"],
+        "skill_level": "intermediate"
+      },
+      "preferences": {
+        "session_duration": 90,
+        "preferred_times": ["morning", "evening"],
+        "communication_style": "collaborative",
+        "session_type": ["one-on-one", "small_group"],
+        "language": "English"
+      },
+      "location": {
+        "city": "San Francisco",
+        "state": "CA",
+        "country": "USA",
+        "coordinates": [-122.4194, 37.7749]
+      },
+      "points": 1250,
+      "level": 5,
+      "badges": ["Early Adopter", "Helpful Tutor", "Active Learner"],
+      "is_active": true,
+      "last_active": "2024-01-15T10:30:00Z",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-15T10:30:00Z"
+    },
+    {
+      "_id": "sample_user_2",
+      "email": "bob.smith@college.edu",
+      "hashed_password": "$2b$12$example_hashed_password_2",
+      "profile": {
+        "full_name": "Bob Smith",
+        "bio": "Physics undergraduate with strong foundation in mathematics. Looking to improve programming skills and explore computational physics.",
+        "field_of_study": "Physics",
+        "academic_level": "undergraduate",
+        "university": "State College",
+        "learning_preferences": ["auditory", "reading"],
+        "goals": ["Learn Python programming", "Understand quantum mechanics", "Improve mathematical modeling"],
+        "timezone": "UTC-5",
+        "profile_picture": "https://example.com/profiles/bob.jpg"
+      },
+      "skills": {
+        "interests": ["Physics", "Mathematics", "Programming", "Quantum Mechanics", "Computational Physics"],
+        "strengths": ["Mathematics", "Theoretical Physics", "Analytical Thinking", "Research"],
+        "weaknesses": ["Programming", "Software Engineering", "Database Design"],
+        "certifications": [],
+        "programming_languages": ["MATLAB", "C++"],
+        "skill_level": "beginner"
+      },
+      "preferences": {
+        "session_duration": 60,
+        "preferred_times": ["afternoon", "evening"],
+        "communication_style": "structured",
+        "session_type": ["one-on-one"],
+        "language": "English"
+      },
+      "location": {
+        "city": "Boston",
+        "state": "MA",
+        "country": "USA",
+        "coordinates": [-71.0589, 42.3601]
+      },
+      "points": 850,
+      "level": 3,
+      "badges": ["Quick Learner", "Mathematics Expert"],
+      "is_active": true,
+      "last_active": "2024-01-14T16:45:00Z",
+      "created_at": "2024-01-05T00:00:00Z",
+      "updated_at": "2024-01-14T16:45:00Z"
+    },
+    {
+      "_id": "sample_user_3",
+      "email": "carol.williams@university.edu",
+      "hashed_password": "$2b$12$example_hashed_password_3",
+      "profile": {
+        "full_name": "Carol Williams",
+        "bio": "Psychology PhD candidate researching cognitive science and human-computer interaction. Interested in interdisciplinary collaboration.",
+        "field_of_study": "Psychology",
+        "academic_level": "phd",
+        "university": "Research University",
+        "learning_preferences": ["visual", "auditory"],
+        "goals": ["Complete dissertation", "Publish in top journals", "Learn statistical analysis"],
+        "timezone": "UTC-6",
+        "profile_picture": "https://example.com/profiles/carol.jpg"
+      },
+      "skills": {
+        "interests": ["Cognitive Science", "Research Methods", "Statistics", "Human-Computer Interaction", "Data Analysis"],
+        "strengths": ["Research Design", "Writing", "Critical Thinking", "SPSS", "Statistics"],
+        "weaknesses": ["Programming", "Machine Learning", "Advanced Statistics"],
+        "certifications": ["CITI Research Ethics", "Statistical Analysis Certificate"],
+        "programming_languages": ["R", "SPSS"],
+        "skill_level": "advanced"
+      },
+      "preferences": {
+        "session_duration": 120,
+        "preferred_times": ["morning", "afternoon"],
+        "communication_style": "discussion-based",
+        "session_type": ["small_group", "workshop"],
+        "language": "English"
+      },
+      "location": {
+        "city": "Chicago",
+        "state": "IL",
+        "country": "USA",
+        "coordinates": [-87.6298, 41.8781]
+      },
+      "points": 2100,
+      "level": 8,
+      "badges": ["Research Expert", "Mentor", "Discussion Leader", "Top Contributor"],
+      "is_active": true,
+      "last_active": "2024-01-15T09:15:00Z",
+      "created_at": "2023-12-15T00:00:00Z",
+      "updated_at": "2024-01-15T09:15:00Z"
+    },
+    {
+      "_id": "sample_user_4",
+      "email": "david.brown@institute.edu",
+      "hashed_password": "$2b$12$example_hashed_password_4",
+      "profile": {
+        "full_name": "David Brown",
+        "bio": "Engineering student specializing in robotics and automation. Passionate about building practical solutions and working with teams.",
+        "field_of_study": "Engineering",
+        "academic_level": "undergraduate",
+        "university": "Technical Institute",
+        "learning_preferences": ["kinesthetic", "visual"],
+        "goals": ["Build robotics projects", "Learn embedded systems", "Improve teamwork skills"],
+        "timezone": "UTC-7",
+        "profile_picture": "https://example.com/profiles/david.jpg"
+      },
+      "skills": {
+        "interests": ["Robotics", "Embedded Systems", "Automation", "Hardware Design", "Control Systems"],
+        "strengths": ["Hardware Design", "Problem Solving", "Teamwork", "Project Management"],
+        "weaknesses": ["Advanced Mathematics", "Signal Processing", "Machine Learning"],
+        "certifications": ["Arduino Certification", "SolidWorks Associate"],
+        "programming_languages": ["C", "C++", "Arduino", "Python"],
+        "skill_level": "intermediate"
+      },
+      "preferences": {
+        "session_duration": 75,
+        "preferred_times": ["evening", "weekend"],
+        "communication_style": "hands-on",
+        "session_type": ["small_group", "project-based"],
+        "language": "English"
+      },
+      "location": {
+        "city": "Austin",
+        "state": "TX",
+        "country": "USA",
+        "coordinates": [-97.7431, 30.2672]
+      },
+      "points": 950,
+      "level": 4,
+      "badges": ["Project Builder", "Team Player", "Hardware Expert"],
+      "is_active": true,
+      "last_active": "2024-01-14T20:30:00Z",
+      "created_at": "2024-01-03T00:00:00Z",
+      "updated_at": "2024-01-14T20:30:00Z"
+    },
+    {
+      "_id": "sample_user_5",
+      "email": "emma.davis@college.edu",
+      "hashed_password": "$2b$12$example_hashed_password_5",
+      "profile": {
+        "full_name": "Emma Davis",
+        "bio": "Business student with focus on data analytics and entrepreneurship. Eager to learn technical skills and apply them to business problems.",
+        "field_of_study": "Business",
+        "academic_level": "undergraduate",
+        "university": "Business College",
+        "learning_preferences": ["visual", "reading"],
+        "goals": ["Learn data analysis", "Start a business", "Improve presentation skills"],
+        "timezone": "UTC-5",
+        "profile_picture": "https://example.com/profiles/emma.jpg"
+      },
+      "skills": {
+        "interests": ["Business Analytics", "Entrepreneurship", "Marketing", "Data Visualization", "Excel"],
+        "strengths": ["Communication", "Leadership", "Strategic Thinking", "Excel", "Presentation"],
+        "weaknesses": ["Programming", "Statistics", "Technical Skills"],
+        "certifications": ["Google Analytics", "HubSpot Marketing"],
+        "programming_languages": ["Excel VBA"],
+        "skill_level": "beginner"
+      },
+      "preferences": {
+        "session_duration": 60,
+        "preferred_times": ["afternoon"],
+        "communication_style": "interactive",
+        "session_type": ["one-on-one", "small_group"],
+        "language": "English"
+      },
+      "location": {
+        "city": "New York",
+        "state": "NY",
+        "country": "USA",
+        "coordinates": [-74.0060, 40.7128]
+      },
+      "points": 650,
+      "level": 2,
+      "badges": ["Enthusiastic Learner", "Business Minded"],
+      "is_active": true,
+      "last_active": "2024-01-15T14:20:00Z",
+      "created_at": "2024-01-08T00:00:00Z",
+      "updated_at": "2024-01-15T14:20:00Z"
+    }
+  ],
+  "study_groups": [
+    {
+      "_id": "group_1",
+      "name": "Machine Learning Study Circle",
+      "description": "Weekly study group focusing on machine learning algorithms and practical implementations",
+      "topic": "Machine Learning",
+      "subject": "Computer Science",
+      "difficulty_level": "intermediate",
+      "max_members": 6,
+      "member_ids": ["sample_user_1", "sample_user_2"],
+      "creator_id": "sample_user_1",
+      "schedule": {
+        "day_of_week": "Wednesday",
+        "time": "19:00",
+        "duration_minutes": 120,
+        "timezone": "UTC-8"
+      },
+      "learning_objectives": [
+        "Understand supervised learning algorithms",
+        "Implement neural networks from scratch",
+        "Work on real-world ML projects"
+      ],
+      "resources": [
+        "Elements of Statistical Learning",
+        "Hands-On Machine Learning",
+        "Online datasets and notebooks"
+      ],
+      "is_active": true,
+      "created_at": "2024-01-10T00:00:00Z",
+      "updated_at": "2024-01-15T00:00:00Z"
+    },
+    {
+      "_id": "group_2",
+      "name": "Physics Problem Solving Workshop",
+      "description": "Collaborative problem-solving sessions for physics undergraduate courses",
+      "topic": "Physics",
+      "subject": "Physics",
+      "difficulty_level": "undergraduate",
+      "max_members": 8,
+      "member_ids": ["sample_user_2", "sample_user_4"],
+      "creator_id": "sample_user_2",
+      "schedule": {
+        "day_of_week": "Saturday",
+        "time": "14:00",
+        "duration_minutes": 180,
+        "timezone": "UTC-5"
+      },
+      "learning_objectives": [
+        "Solve complex physics problems",
+        "Understand theoretical concepts",
+        "Prepare for exams and assignments"
+      ],
+      "resources": [
+        "University Physics textbook",
+        "Problem sets from various courses",
+        "Online physics simulations"
+      ],
+      "is_active": true,
+      "created_at": "2024-01-05T00:00:00Z",
+      "updated_at": "2024-01-14T00:00:00Z"
+    },
+    {
+      "_id": "group_3",
+      "name": "Research Methods & Statistics",
+      "description": "Graduate-level study group for research methodology and statistical analysis",
+      "topic": "Research Methods",
+      "subject": "Psychology",
+      "difficulty_level": "graduate",
+      "max_members": 5,
+      "member_ids": ["sample_user_3"],
+      "creator_id": "sample_user_3",
+      "schedule": {
+        "day_of_week": "Friday",
+        "time": "16:00",
+        "duration_minutes": 150,
+        "timezone": "UTC-6"
+      },
+      "learning_objectives": [
+        "Master advanced statistical methods",
+        "Design robust research studies",
+        "Analyze and interpret complex data"
+      ],
+      "resources": [
+        "Research Methods in Psychology",
+        "Statistical software (R, SPSS)",
+        "Journal articles and case studies"
+      ],
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-15T00:00:00Z"
+    }
+  ],
+  "learning_resources": [
+    {
+      "_id": "resource_1",
+      "title": "Introduction to Machine Learning",
+      "description": "Comprehensive course covering supervised and unsupervised learning algorithms",
+      "resource_type": "course",
+      "difficulty_level": "intermediate",
+      "topics": ["Machine Learning", "Data Science", "Python Programming"],
+      "url": "https://example.com/ml-course",
+      "estimated_duration": "40 hours",
+      "format": "video_lectures",
+      "language": "English",
+      "average_rating": 4.6,
+      "rating_count": 2300,
+      "prerequisites": ["Basic Python", "Linear Algebra", "Statistics"],
+      "learning_outcomes": [
+        "Implement common ML algorithms",
+        "Evaluate model performance",
+        "Apply ML to real-world problems"
+      ],
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-15T00:00:00Z"
+    },
+    {
+      "_id": "resource_2",
+      "title": "Physics Problem Solving Techniques",
+      "description": "Step-by-step approach to solving complex physics problems",
+      "resource_type": "guide",
+      "difficulty_level": "undergraduate",
+      "topics": ["Physics", "Problem Solving", "Mathematics"],
+      "url": "https://example.com/physics-guide",
+      "estimated_duration": "12 hours",
+      "format": "interactive_text",
+      "language": "English",
+      "average_rating": 4.3,
+      "rating_count": 890,
+      "prerequisites": ["Calculus", "Basic Physics"],
+      "learning_outcomes": [
+        "Systematically approach physics problems",
+        "Apply mathematical techniques",
+        "Develop problem-solving intuition"
+      ],
+      "created_at": "2024-01-05T00:00:00Z",
+      "updated_at": "2024-01-10T00:00:00Z"
+    },
+    {
+      "_id": "resource_3",
+      "title": "Statistical Analysis with R",
+      "description": "Hands-on tutorial for statistical analysis using R programming language",
+      "resource_type": "tutorial",
+      "difficulty_level": "intermediate",
+      "topics": ["Statistics", "R Programming", "Data Analysis"],
+      "url": "https://example.com/r-statistics",
+      "estimated_duration": "25 hours",
+      "format": "interactive_coding",
+      "language": "English",
+      "average_rating": 4.5,
+      "rating_count": 1200,
+      "prerequisites": ["Basic Statistics", "Programming Basics"],
+      "learning_outcomes": [
+        "Perform statistical tests in R",
+        "Create data visualizations",
+        "Interpret statistical results"
+      ],
+      "created_at": "2024-01-02T00:00:00Z",
+      "updated_at": "2024-01-12T00:00:00Z"
+    },
+    {
+      "_id": "resource_4",
+      "title": "Business Data Analytics Fundamentals",
+      "description": "Introduction to data analytics for business decision making",
+      "resource_type": "course",
+      "difficulty_level": "beginner",
+      "topics": ["Business Analytics", "Excel", "Data Visualization"],
+      "url": "https://example.com/business-analytics",
+      "estimated_duration": "20 hours",
+      "format": "video_lectures",
+      "language": "English",
+      "average_rating": 4.2,
+      "rating_count": 1500,
+      "prerequisites": ["Basic Excel", "Business Fundamentals"],
+      "learning_outcomes": [
+        "Analyze business data",
+        "Create compelling visualizations",
+        "Make data-driven decisions"
+      ],
+      "created_at": "2024-01-03T00:00:00Z",
+      "updated_at": "2024-01-14T00:00:00Z"
+    }
+  ],
+  "sample_matches": [
+    {
+      "_id": "match_1",
+      "user_id": "sample_user_1",
+      "matched_user_id": "sample_user_2",
+      "compatibility_score": 0.75,
+      "match_type": "skill_complement",
+      "topics": ["Programming", "Mathematics"],
+      "status": "accepted",
+      "match_reasons": [
+        "Alice can help Bob with Python programming",
+        "Bob's strong math background complements Alice's interests",
+        "Both interested in computational approaches"
+      ],
+      "created_at": "2024-01-10T00:00:00Z",
+      "accepted_at": "2024-01-11T00:00:00Z"
+    },
+    {
+      "_id": "match_2",
+      "user_id": "sample_user_3",
+      "matched_user_id": "sample_user_5",
+      "compatibility_score": 0.68,
+      "match_type": "cross_discipline",
+      "topics": ["Statistics", "Business Analytics"],
+      "status": "pending",
+      "match_reasons": [
+        "Carol's statistics expertise can help Emma",
+        "Emma's business perspective valuable for Carol's research",
+        "Both interested in data analysis applications"
+      ],
+      "created_at": "2024-01-14T00:00:00Z"
+    }
+  ],
+  "sample_feedback": [
+    {
+      "_id": "feedback_1",
+      "session_id": "session_1",
+      "reviewer_id": "sample_user_2",
+      "reviewee_id": "sample_user_1",
+      "rating": 5,
+      "feedback_text": "Alice was incredibly helpful in explaining Python concepts. Her patience and clear explanations made complex topics easy to understand. The session was well-structured and she provided excellent examples.",
+      "categories": {
+        "knowledge": 5,
+        "communication": 5,
+        "preparation": 5,
+        "helpfulness": 5
+      },
+      "sentiment": "positive",
+      "quality_assessment": "excellent",
+      "session_type": "one-on-one",
+      "topic": "Python Programming",
+      "created_at": "2024-01-12T00:00:00Z"
+    },
+    {
+      "_id": "feedback_2",
+      "session_id": "session_2",
+      "reviewer_id": "sample_user_1",
+      "reviewee_id": "sample_user_2",
+      "rating": 4,
+      "feedback_text": "Bob brought great mathematical insights to our discussion. His problem-solving approach was systematic and thorough. Would benefit from more programming practice but overall very productive session.",
+      "categories": {
+        "knowledge": 5,
+        "communication": 4,
+        "preparation": 4,
+        "helpfulness": 4
+      },
+      "sentiment": "positive",
+      "quality_assessment": "good",
+      "session_type": "one-on-one",
+      "topic": "Mathematical Modeling",
+      "created_at": "2024-01-12T01:00:00Z"
+    }
+  ],
+  "sample_gamification": [
+    {
+      "_id": "gamification_1",
+      "user_id": "sample_user_1",
+      "points": 1250,
+      "level": 5,
+      "badges": [
+        {
+          "name": "Early Adopter",
+          "description": "One of the first users on the platform",
+          "earned_date": "2024-01-01T00:00:00Z",
+          "icon": "🌟"
+        },
+        {
+          "name": "Helpful Tutor",
+          "description": "Received excellent feedback for tutoring sessions",
+          "earned_date": "2024-01-12T00:00:00Z",
+          "icon": "🎓"
+        },
+        {
+          "name": "Active Learner",
+          "description": "Completed 10 learning sessions",
+          "earned_date": "2024-01-15T00:00:00Z",
+          "icon": "📚"
+        }
+      ],
+      "achievements": [
+        {
+          "name": "Perfect Score",
+          "description": "Received 5-star rating in a session",
+          "progress": 1,
+          "target": 1,
+          "completed": true,
+          "earned_date": "2024-01-12T00:00:00Z"
+        },
+        {
+          "name": "Knowledge Sharer",
+          "description": "Help 25 fellow learners",
+          "progress": 8,
+          "target": 25,
+          "completed": false
+        }
+      ],
+      "streak": {
+        "current": 7,
+        "longest": 12,
+        "last_activity": "2024-01-15T00:00:00Z"
+      },
+      "weekly_goals": {
+        "sessions_completed": 3,
+        "sessions_target": 5,
+        "points_earned": 150,
+        "points_target": 200
+      }
+    }
+  ]
+}
