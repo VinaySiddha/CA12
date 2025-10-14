@@ -39,6 +39,14 @@ class MLService:
         self.scaler = StandardScaler()
         self.pca = PCA(n_components=10)
         
+        # Model status tracking
+        self.model_status = {
+            "user_recommender": False,
+            "topic_recommender": False,
+            "expert_matching_model": False,
+            "success_predictor": False
+        }
+        
         # Initialize the ML recommendation model from imported module
         if recommendation_model_imported:
             try:
@@ -70,6 +78,7 @@ class MLService:
             )
             self.user_recommender.fit(features)
             
+            self.model_status["user_recommender"] = True
             logger.info("User recommender model trained successfully")
             return True
             
@@ -177,6 +186,7 @@ class MLService:
             )
             self.topic_recommender.fit(user_topic_matrix.T)  # Transpose to get topic similarity
             
+            self.model_status["topic_recommender"] = True
             logger.info("Topic recommender model trained successfully")
             return True
             
@@ -231,6 +241,7 @@ class MLService:
             )
             self.success_predictor.fit(X_scaled, y)
             
+            self.model_status["success_predictor"] = True
             logger.info("Success predictor model trained successfully")
             return True
             
@@ -428,6 +439,93 @@ class MLService:
             "Active participation",
             "Clear learning objectives"
         ]
+    
+    async def train_expert_matching_model(self, experts: List[Dict]) -> bool:
+        """
+        Train the expert matching model with available experts
+        This is a simplified version that marks the model as trained
+        """
+        try:
+            if len(experts) < 1:
+                logger.warning("No experts to train model")
+                return False
+            
+            # Store experts for matching
+            self.expert_pool = experts
+            self.model_status["expert_matching_model"] = True
+            logger.info(f"Expert matching model trained with {len(experts)} experts")
+            return True
+        except Exception as e:
+            logger.error(f"Error training expert matching model: {e}")
+            return False
+    
+    async def find_expert_matches(self, student: Dict, limit: int = 10) -> List[Dict]:
+        """
+        Find expert matches for a student based on interests and expertise
+        Uses similarity scoring
+        """
+        try:
+            if not hasattr(self, 'expert_pool') or not self.expert_pool:
+                logger.warning("Expert pool not initialized")
+                return []
+            
+            matches = []
+            student_interests = set(student.get("skills", {}).get("interests", []))
+            student_weaknesses = set(student.get("skills", {}).get("weaknesses", []))
+            student_field = student.get("profile", {}).get("field_of_study", "").lower()
+            
+            for expert in self.expert_pool:
+                expert_areas = set(expert.get("expertise_areas", []))
+                
+                # Calculate match score based on overlaps
+                interest_overlap = len(student_interests & expert_areas)
+                weakness_coverage = len(student_weaknesses & expert_areas)
+                
+                # Field alignment bonus
+                expert_field = expert.get("profile", {}).get("field_of_study", "").lower()
+                field_match = 1.0 if student_field and expert_field and student_field == expert_field else 0.5
+                
+                # Calculate overall score (0-100)
+                score = (
+                    (interest_overlap * 30) +  # 30 points per interest match
+                    (weakness_coverage * 40) +  # 40 points per weakness covered
+                    (field_match * 20) +  # 20 points for field alignment
+                    (min(expert.get("years_experience", 0), 10) * 1)  # Up to 10 points for experience
+                )
+                
+                if score > 0:
+                    matched_interests = list(student_interests & expert_areas)
+                    
+                    match_data = {
+                        "expert_id": expert["_id"],
+                        "expert_name": expert.get("full_name", "Unknown"),
+                        "expert_role": expert.get("role", "expert"),
+                        "job_title": expert.get("job_title", ""),
+                        "company": expert.get("company", ""),
+                        "expertise_areas": expert.get("expertise_areas", []),
+                        "years_experience": expert.get("years_experience", 0),
+                        "match_score": min(score, 100),  # Cap at 100
+                        "matched_interests": matched_interests,
+                        "score_breakdown": {
+                            "interest_match": interest_overlap * 30,
+                            "weakness_coverage": weakness_coverage * 40,
+                            "field_alignment": field_match * 20,
+                            "experience": min(expert.get("years_experience", 0), 10)
+                        },
+                        "explanation": {
+                            "shared_interests": matched_interests,
+                            "can_help_with": list(student_weaknesses & expert_areas)
+                        }
+                    }
+                    matches.append(match_data)
+            
+            # Sort by score and return top matches
+            matches.sort(key=lambda x: x["match_score"], reverse=True)
+            return matches[:limit]
+            
+        except Exception as e:
+            logger.error(f"Error finding expert matches: {e}")
+            return []
 
 
 # Global instance

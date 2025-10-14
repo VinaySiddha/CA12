@@ -23,6 +23,34 @@ DEMO_USERS = [
         "password": "student123",
         "role": "student",
         "is_active": True,
+        "profile": {
+            "bio": "Computer science student interested in AI and web development",
+            "academic_level": "undergraduate",
+            "field_of_study": "Computer Science",
+            "institution": "State University",
+            "learning_preferences": ["visual", "kinesthetic"],
+            "availability": {
+                "monday": ["14:00-16:00"],
+                "wednesday": ["14:00-16:00"],
+                "friday": ["14:00-16:00"]
+            },
+            "timezone": "UTC",
+            "languages": ["English"]
+        },
+        "skills": {
+            "strengths": ["JavaScript", "HTML", "CSS"],
+            "weaknesses": ["Machine Learning", "Data Science", "Cloud Computing"],
+            "interests": ["Machine Learning", "Web Development", "Python", "React", "Data Science"],
+            "expertise_level": {
+                "javascript": 6,
+                "html": 7,
+                "css": 7,
+                "python": 5
+            }
+        },
+        "points": 100,
+        "level": 2,
+        "badges": []
     },
     {
         "email": "teacher@example.com",

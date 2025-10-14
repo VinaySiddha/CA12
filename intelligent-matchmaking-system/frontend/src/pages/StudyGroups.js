@@ -44,9 +44,38 @@ const StudyGroups = () => {
     try {
       setLoading(true);
       
-      // Simulate API call with mock data
-      setTimeout(() => {
-        const mockGroups = [
+      // Fetch real study groups from API
+      const response = await fetch('http://localhost:8000/matches/study-groups', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch study groups');
+      }
+      
+      const data = await response.json();
+      
+      if (activeTab === 'discover') {
+        setStudyGroups(data);
+      } else if (activeTab === 'my-groups') {
+        // Filter groups where user is a member
+        const myGroupsData = data.filter(group => 
+          group.members.some(member => member.user_id === user?.id)
+        );
+        setMyGroups(myGroupsData);
+      }
+      
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching study groups:', error);
+      setLoading(false);
+      // Fallback to empty array if API fails
+      setStudyGroups([]);
+      setMyGroups([]);
+    }
+  };
           {
             id: 1,
             name: 'AI/ML Study Circle',

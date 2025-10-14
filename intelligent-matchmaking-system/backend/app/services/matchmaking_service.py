@@ -339,6 +339,65 @@ class MatchmakingService:
         )
         
         return recommendations
+    
+    async def find_expert_matches(self, student_id: str, limit: int = 10) -> List[Dict]:
+        """
+        Find expert/professional matches for a student based on interests
+        Uses the ML expert matching model
+        """
+        users_collection = get_users_collection()
+        
+        # Get the student profile
+        student = await users_collection.find_one({"_id": ObjectId(student_id)})
+        if not student:
+            logger.warning(f"Student {student_id} not found")
+            return []
+        
+        # Get all experts/professionals
+        experts = []
+        async for expert in users_collection.find({
+            "is_active": True,
+            "role": {"$in": ["expert", "professional", "mentor"]},
+            "_id": {"$ne": ObjectId(student_id)}
+        }):
+            expert["_id"] = str(expert["_id"])
+            experts.append(expert)
+        
+        if len(experts) == 0:
+            logger.warning("No experts found in the system")
+            return []
+        
+        # Train the expert matching model if not already trained
+        if not ml_service.model_status.get("expert_matching_model", False):
+            logger.info(f"Training expert matching model with {len(experts)} experts")
+            await ml_service.train_expert_matching_model(experts)
+        
+        # Get student profile with string ID for ML model
+        student_copy = student.copy()
+        student_copy["_id"] = str(student_copy["_id"])
+        
+        # Get expert matches using ML
+        matches = await ml_service.find_expert_matches(student_copy, limit=limit)
+        
+        # Format for API response
+        results = []
+        for match in matches:
+            result = {
+                "id": match["expert_id"],
+                "full_name": match["expert_name"],
+                "role": match["expert_role"],
+                "job_title": match.get("job_title", ""),
+                "company": match.get("company", ""),
+                "expertise_areas": match.get("expertise_areas", []),
+                "years_experience": match.get("years_experience", 0),
+                "match_score": match["match_score"],
+                "score_breakdown": match.get("score_breakdown", {}),
+                "matched_interests": match.get("matched_interests", []),
+                "explanation": match.get("explanation", {})
+            }
+            results.append(result)
+        
+        return results
 
 
 # Global instance

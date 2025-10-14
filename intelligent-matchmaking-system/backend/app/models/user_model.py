@@ -62,13 +62,17 @@ class UserModel(BaseModel):
     hashed_password: str
     is_active: bool = True
     is_verified: bool = False
-    role: str = "student"  # "student", "teacher", "mentor", "admin"
+    role: str = "student"  # "student", "expert", "professional", "admin"
     profile: Optional[UserProfile] = None
     skills: Optional[UserSkills] = None
     
-    # Teacher-specific fields
-    teaching_subjects: List[str] = []
+    # Expert/Professional-specific fields
+    expertise_areas: List[str] = []  # Areas of expertise
     years_experience: Optional[int] = None
+    company: Optional[str] = None  # Current company/organization
+    job_title: Optional[str] = None  # Current job title
+    linkedin_url: Optional[str] = None
+    portfolio_url: Optional[str] = None
     
     # Gamification fields
     points: int = 0

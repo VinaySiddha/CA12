@@ -59,6 +59,38 @@ async def get_ml_recommendations(
         )
 
 
+@router.get("/expert-matches", response_model=List[dict])
+async def get_expert_matches(
+    limit: int = Query(10, ge=1, le=20),
+    current_user: dict = Depends(get_current_active_user)
+):
+    """
+    Get expert/professional matches for students based on shared interests
+    Uses ML model to match student interests with expert expertise
+    """
+    try:
+        # Only students can request expert matches
+        if current_user.get("role") not in ["student"]:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Only students can request expert matches"
+            )
+        
+        matches = await matchmaking_service.find_expert_matches(
+            student_id=str(current_user["_id"]),
+            limit=limit
+        )
+        return matches
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting expert matches: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to find expert matches: {str(e)}"
+        )
+
+
 @router.post("/create", response_model=dict)
 async def create_match(
     match_data: MatchCreate,

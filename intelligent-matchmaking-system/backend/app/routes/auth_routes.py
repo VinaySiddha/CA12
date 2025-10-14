@@ -134,7 +134,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         "email": user.get("email"),
         "full_name": user.get("full_name"),
         "role": user.get("role", "student"),
-        "last_login": current_time
+        "last_login": current_time.isoformat() + "Z"  # Convert to ISO format string
     }
     
     return {

@@ -13,9 +13,9 @@ import LoginPage from './pages/LoginPage-new';
 import RegisterPage from './pages/RegisterPage-new';
 import Dashboard from './pages/Dashboard-new';
 import Profile from './pages/Profile-new';
-import Matches from './pages/Matches-new';
-import StudyGroups from './pages/StudyGroups-new';
-import Resources from './pages/Resources-new';
+import Matches from './pages/Matches-production';
+import StudyGroups from './pages/StudyGroups-production';
+import Resources from './pages/Resources-production';
 
 // Role-specific Pages
 import StudentsPage from './pages/StudentsPage';

@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from .topic_nlp_model import topic_classifier
 from .recommendation_model import recommendation_model
 from .feedback_predictor import feedback_predictor
+from .expert_matching_model import expert_matching_model
 
 logger = logging.getLogger(__name__)
 
@@ -18,11 +19,13 @@ class MLService:
         self.topic_classifier = topic_classifier
         self.recommendation_model = recommendation_model
         self.feedback_predictor = feedback_predictor
+        self.expert_matching_model = expert_matching_model
         
         self.model_status = {
             "topic_classifier": False,
             "recommendation_model": False,
             "feedback_predictor": False,
+            "expert_matching_model": False,
             "last_training_update": None
         }
         
@@ -41,7 +44,10 @@ class MLService:
             # Recommendation model needs data to be trained
             self.model_status["recommendation_model"] = False
             
-            logger.info("ML Service initialized")
+            # Expert matching model needs data to be trained
+            self.model_status["expert_matching_model"] = False
+            
+            logger.info("ML Service initialized with Expert Matching Model")
             
         except Exception as e:
             logger.error(f"Error initializing ML models: {e}")
@@ -579,6 +585,87 @@ class MLService:
                 "compatibility_score": 0.5,
                 "error": str(e)
             }
+    
+    async def train_expert_matching_model(self, experts_data: List[Dict]) -> bool:
+        """Train the expert matching model with expert/professional profiles"""
+        try:
+            if len(experts_data) < 1:
+                logger.warning("No experts available for training")
+                return False
+            
+            # Filter only experts and professionals
+            experts = [
+                user for user in experts_data 
+                if user.get('role') in ['expert', 'professional', 'mentor']
+            ]
+            
+            if len(experts) < 1:
+                logger.warning("No expert/professional users found")
+                return False
+            
+            # Train the expert matching model
+            success = self.expert_matching_model.train(experts)
+            
+            if success:
+                self.model_status["expert_matching_model"] = True
+                self.model_status["last_training_update"] = datetime.utcnow().isoformat()
+                logger.info(f"Expert matching model trained with {len(experts)} experts")
+            
+            return success
+            
+        except Exception as e:
+            logger.error(f"Error training expert matching model: {e}")
+            return False
+    
+    async def find_expert_matches(self, student_profile: Dict, 
+                                 limit: int = 10) -> List[Dict]:
+        """
+        Find expert matches for a student based on interests and learning needs
+        
+        Args:
+            student_profile: Student's profile with interests and skills
+            limit: Maximum number of matches to return
+            
+        Returns:
+            List of expert matches with scores and explanations
+        """
+        try:
+            if not self.model_status["expert_matching_model"]:
+                logger.warning("Expert matching model not trained")
+                return []
+            
+            # Get matches from the ML model
+            matches = self.expert_matching_model.find_matches(student_profile, top_k=limit)
+            
+            # Enrich with additional information
+            enriched_matches = []
+            for match in matches:
+                enriched_match = {
+                    **match,
+                    'recommendation_type': 'ml_expert_matching',
+                    'timestamp': datetime.utcnow().isoformat(),
+                    'explanation': self.expert_matching_model.explain_match(
+                        student_profile,
+                        self._find_expert_by_id(match['expert_id'])
+                    ) if hasattr(self.expert_matching_model, 'expert_profiles') else None
+                }
+                enriched_matches.append(enriched_match)
+            
+            return enriched_matches
+            
+        except Exception as e:
+            logger.error(f"Error finding expert matches: {e}")
+            return []
+    
+    def _find_expert_by_id(self, expert_id: str) -> Optional[Dict]:
+        """Helper to find expert profile by ID"""
+        try:
+            for expert in self.expert_matching_model.expert_profiles:
+                if str(expert.get('_id', expert.get('id'))) == expert_id:
+                    return expert
+            return None
+        except Exception:
+            return None
 
 
 # Global ML service instance

@@ -16,7 +16,12 @@ from app.routes import (
     admin_routes,
     gamification_routes,
     ml_routes,
-    token_routes
+    token_routes,
+    social_routes,
+    resource_routes,
+    meeting_routes,
+    chat_routes,
+    notification_routes
 )
 
 
@@ -58,7 +63,12 @@ app.include_router(match_routes.router, prefix="/matches", tags=["Matches"])
 app.include_router(feedback_routes.router, prefix="/feedback", tags=["Feedback"])
 app.include_router(admin_routes.router, prefix="/admin", tags=["Admin"])
 app.include_router(gamification_routes.router, prefix="/gamification", tags=["Gamification"])
+app.include_router(social_routes.router, prefix="/social", tags=["Social Feed"])
 app.include_router(ml_routes.router, prefix="/ml", tags=["Machine Learning"])
+app.include_router(resource_routes.router, tags=["Resources"])
+app.include_router(meeting_routes.router, tags=["Meetings"])
+app.include_router(chat_routes.router, tags=["Chat"])
+app.include_router(notification_routes.router, tags=["Notifications"])
 
 
 @app.get("/")
