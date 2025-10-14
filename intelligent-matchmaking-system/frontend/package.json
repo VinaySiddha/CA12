@@ -46,7 +46,7 @@
     "tailwindcss": "^3.3.6"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts start -p 8000",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

@@ -49,12 +49,23 @@ async def register(user_data: RegisterRequest):
     
     # Create new user
     hashed_password = get_password_hash(user_data.password)
-    new_user = UserModel(
-        email=user_data.email,
-        username=user_data.username,
-        full_name=user_data.full_name,
-        hashed_password=hashed_password
-    )
+    
+    # Basic user data
+    user_dict = {
+        "email": user_data.email,
+        "username": user_data.username,
+        "full_name": user_data.full_name,
+        "hashed_password": hashed_password,
+        "role": user_data.role
+    }
+    
+    # Add teacher-specific fields if applicable
+    if user_data.role == "teacher" and user_data.teaching_subjects:
+        user_dict["teaching_subjects"] = user_data.teaching_subjects
+        if user_data.years_experience:
+            user_dict["years_experience"] = user_data.years_experience
+    
+    new_user = UserModel(**user_dict)
     
     # Insert user into database
     result = await users_collection.insert_one(new_user.dict(by_alias=True, exclude={"id"}))
@@ -108,13 +119,30 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         data={"sub": user_id_str}, expires_delta=access_token_expires
     )
     
-    # Update last login
+    # Update last login with current datetime
+    from datetime import datetime
+    current_time = datetime.utcnow()
     await users_collection.update_one(
         {"_id": user["_id"]},
-        {"$set": {"last_login": "2025-01-01T00:00:00Z"}}
+        {"$set": {"last_login": current_time}}
     )
     
-    return {"access_token": access_token, "token_type": "bearer"}
+    # Get basic user info to return with token
+    user_info = {
+        "id": user_id_str,
+        "username": user.get("username"),
+        "email": user.get("email"),
+        "full_name": user.get("full_name"),
+        "role": user.get("role", "student"),
+        "last_login": current_time
+    }
+    
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": user_info,
+        "expires_in": settings.access_token_expire_minutes * 60
+    }
 
 
 @router.post("/logout")

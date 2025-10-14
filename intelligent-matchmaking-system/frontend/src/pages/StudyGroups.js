@@ -244,7 +244,7 @@ const StudyGroups = () => {
             </div>
             <div className="ml-4">
               <div className="text-center">
-                <div className="text-lg font-bold text-primary-400">{group.members.length}</div>
+                <div className="text-lg font-bold text-primary">{group.members.length}</div>
                 <div className="text-black/60 text-xs">/{group.maxMembers}</div>
               </div>
             </div>
@@ -319,7 +319,7 @@ const StudyGroups = () => {
         {group.upcomingSessions.length > 0 && (
           <div className="px-6 pb-4">
             <div className="p-3 rounded-lg bg-primary-500/20 border border-primary-400/30">
-              <div className="text-primary-300 text-sm font-medium mb-1">Next Session</div>
+              <div className="text-primary text-sm font-medium mb-1">Next Session</div>
               <div className="text-black text-sm">{group.upcomingSessions[0].topic}</div>
               <div className="text-black/60 text-xs">
                 {group.upcomingSessions[0].date} at {group.upcomingSessions[0].time}

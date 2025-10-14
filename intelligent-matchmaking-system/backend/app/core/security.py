@@ -89,3 +89,13 @@ async def get_admin_user(current_user: dict = Depends(get_current_active_user)):
             detail="Admin access required"
         )
     return current_user
+
+
+async def get_current_superuser(current_user: dict = Depends(get_current_active_user)):
+    """Get current superuser (admin) for system operations"""
+    if current_user.get("role") not in ["admin", "superuser"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Superuser access required"
+        )
+    return current_user

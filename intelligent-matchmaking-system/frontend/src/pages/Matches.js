@@ -34,14 +34,17 @@ const Matches = () => {
 
   useEffect(() => {
     fetchMatches();
-  }, [filterCriteria]);
+  }, [filterCriteria, activeTab]);
 
   const fetchMatches = async () => {
     try {
       setLoading(true);
       
-      // Simulate API call with mock data
-      setTimeout(() => {
+      if (activeTab === 'discover') {
+        // Fetch real ML recommendations
+        await fetchMlRecommendations();
+      } else {
+        // Fall back to mock data for other tabs
         const mockMatches = [
           {
             id: 1,
@@ -110,82 +113,118 @@ const Matches = () => {
             sharedSubjects: ['Statistics', 'Machine Learning', 'Python'],
             lastActive: '1 day ago',
             status: 'away'
-          },
-          {
-            id: 3,
-            profile: {
-              full_name: 'Emily Zhang',
-              avatar: '👩‍🔬',
-              university: 'UC Berkeley',
-              major: 'Software Engineering',
-              year: 'Sophomore',
-              location: 'Berkeley, CA',
-              bio: 'Full-stack developer interested in modern web technologies. Always excited to learn new frameworks and best practices.',
-              subjects: ['React', 'Node.js', 'JavaScript', 'System Design'],
-              skills: {
-                'React': 'Advanced',
-                'JavaScript': 'Expert',
-                'Node.js': 'Intermediate',
-                'System Design': 'Beginner'
-              },
-              studyPreferences: {
-                style: 'Project-based learning',
-                schedule: 'Weekend',
-                duration: '3-4 hours',
-                frequency: '1x per week'
-              },
-              achievements: ['React Certification', 'Open Source Contributor', 'Internship at Google'],
-              rating: 4.7,
-              completedSessions: 18,
-              responseRate: '98%'
-            },
-            compatibility: 82,
-            matchReason: 'Complementary web development skills',
-            sharedSubjects: ['JavaScript', 'React', 'System Design'],
-            lastActive: '5 minutes ago',
-            status: 'online'
-          },
-          {
-            id: 4,
-            profile: {
-              full_name: 'Michael Torres',
-              avatar: '👨‍💼',
-              university: 'Harvard',
-              major: 'Mathematics',
-              year: 'Graduate',
-              location: 'Cambridge, MA',
-              bio: 'PhD student in Applied Mathematics. Specializing in optimization and numerical methods. Happy to help with calculus and linear algebra.',
-              subjects: ['Calculus', 'Linear Algebra', 'Optimization', 'Numerical Methods'],
-              skills: {
-                'Calculus': 'Expert',
-                'Linear Algebra': 'Expert',
-                'Optimization': 'Advanced',
-                'MATLAB': 'Advanced'
-              },
-              studyPreferences: {
-                style: 'Theoretical approach',
-                schedule: 'Morning',
-                duration: '2 hours',
-                frequency: '2x per week'
-              },
-              achievements: ['Teaching Assistant', 'Research Grant Recipient', 'Published Papers'],
-              rating: 4.9,
-              completedSessions: 45,
-              responseRate: '90%'
-            },
-            compatibility: 78,
-            matchReason: 'Strong mathematical foundation',
-            sharedSubjects: ['Calculus', 'Linear Algebra'],
-            lastActive: '30 minutes ago',
-            status: 'busy'
           }
         ];
         
         setMatches(mockMatches);
         setLoading(false);
-      }, 1000);
+      }
     } catch (error) {
       console.error('Error fetching matches:', error);
+      setLoading(false);
+    }
+  };
+  
+  const fetchMlRecommendations = async () => {
+    try {
+      // Get token from localStorage
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication token not found');
+      }
+      
+      const response = await fetch('/api/matches/ml-recommendations?limit=10', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch recommendations: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Transform API data to match the UI format
+      const transformedMatches = data.map(user => {
+        const userSkills = user.skills || {};
+        const userProfile = user.profile || {};
+        
+        return {
+          id: user.id,
+          profile: {
+            full_name: userProfile.full_name || 'Anonymous User',
+            avatar: '👨‍🎓', // Default avatar
+            university: userProfile.university || 'University not specified',
+            major: userProfile.field_of_study || 'Field not specified',
+            year: userProfile.academic_level || 'Level not specified',
+            location: userProfile.location || 'Location not specified',
+            bio: userProfile.bio || 'No bio available',
+            subjects: userSkills.interests || [],
+            skills: userSkills.strengths ? 
+              userSkills.strengths.reduce((acc, skill) => {
+                acc[skill] = 'Advanced'; // Default skill level
+                return acc;
+              }, {}) : {},
+            studyPreferences: {
+              style: userProfile.learning_preferences ? userProfile.learning_preferences.join(', ') : 'Not specified',
+              schedule: 'Flexible',
+              duration: '1-2 hours',
+              frequency: '2x per week'
+            }
+          },
+          compatibility: user.ml_score ? Math.round(user.ml_score * 100) : 
+                        user.match_score ? Math.round(user.match_score.overall_score * 100) : 80,
+          matchReason: user.match_reasons && user.match_reasons.length > 0 ? 
+                      user.match_reasons[0] : 'ML-recommended match',
+          sharedSubjects: userSkills.interests || [],
+          lastActive: 'Recently',
+          status: Math.random() > 0.5 ? 'online' : 'away'
+        };
+      });
+      
+      setMatches(transformedMatches);
+      setLoading(false);
+      
+    } catch (error) {
+      console.error('Error fetching ML recommendations:', error);
+      // Fall back to mock data
+      const mockMatches = [
+        {
+          id: 1,
+          profile: {
+            full_name: 'Sarah Chen',
+            avatar: '�‍�',
+            university: 'MIT',
+            major: 'Computer Science',
+            year: 'Junior',
+            location: 'Cambridge, MA',
+            bio: 'Passionate about machine learning and AI. Looking for study partners for advanced algorithms and data structures.',
+            subjects: ['Machine Learning', 'Algorithms', 'Python', 'Data Structures'],
+            skills: {
+              'Machine Learning': 'Advanced',
+              'Python': 'Expert',
+              'Algorithms': 'Intermediate',
+              'Data Structures': 'Advanced'
+            },
+            studyPreferences: {
+              style: 'Visual learner',
+              schedule: 'Evening',
+              duration: '2-3 hours',
+              frequency: '3x per week'
+            }
+          },
+          compatibility: 95,
+          matchReason: 'ML-based recommendation (fallback)',
+          sharedSubjects: ['Machine Learning', 'Python', 'Algorithms'],
+          lastActive: '2 hours ago',
+          status: 'online'
+        }
+      ];
+      
+      setMatches(mockMatches);
       setLoading(false);
     }
   };
@@ -571,6 +610,21 @@ const Matches = () => {
         </GlassCard>
       </motion.div>
 
+      {/* ML Indicator */}
+      {activeTab === 'discover' && !loading && (
+        <motion.div 
+          className="mb-4 flex items-center justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <SparklesIcon className="w-5 h-5 text-purple-500 mr-2" />
+          <span className="text-sm text-purple-600 font-medium">
+            Recommendations powered by intelligent matchmaking algorithm
+          </span>
+        </motion.div>
+      )}
+      
       {/* Matches Grid */}
       <motion.div
         className="grid md:grid-cols-2 xl:grid-cols-3 gap-6"

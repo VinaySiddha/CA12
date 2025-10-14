@@ -14,7 +14,9 @@ from app.routes import (
     match_routes,
     feedback_routes,
     admin_routes,
-    gamification_routes
+    gamification_routes,
+    ml_routes,
+    token_routes
 )
 
 
@@ -50,11 +52,13 @@ app.add_middleware(
 
 # Include routers
 app.include_router(auth_routes.router, prefix="/auth", tags=["Authentication"])
+app.include_router(token_routes.router, prefix="/token", tags=["Authentication"])
 app.include_router(user_routes.router, prefix="/users", tags=["Users"])
 app.include_router(match_routes.router, prefix="/matches", tags=["Matches"])
 app.include_router(feedback_routes.router, prefix="/feedback", tags=["Feedback"])
 app.include_router(admin_routes.router, prefix="/admin", tags=["Admin"])
 app.include_router(gamification_routes.router, prefix="/gamification", tags=["Gamification"])
+app.include_router(ml_routes.router, prefix="/ml", tags=["Machine Learning"])
 
 
 @app.get("/")

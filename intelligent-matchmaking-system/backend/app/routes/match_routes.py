@@ -39,6 +39,26 @@ async def find_matches(
         )
 
 
+@router.get("/ml-recommendations", response_model=List[dict])
+async def get_ml_recommendations(
+    limit: int = Query(5, ge=1, le=20),
+    current_user: dict = Depends(get_current_active_user)
+):
+    """Get intelligent recommendations using the ML model"""
+    try:
+        recommendations = await matchmaking_service.find_ml_recommendations(
+            user_id=str(current_user["_id"]),
+            limit=limit
+        )
+        return recommendations
+    except Exception as e:
+        logger.error(f"Error getting ML recommendations: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to generate recommendations"
+        )
+
+
 @router.post("/create", response_model=dict)
 async def create_match(
     match_data: MatchCreate,

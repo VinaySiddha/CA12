@@ -2,6 +2,10 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
+// Configure axios defaults
+axios.defaults.baseURL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+axios.defaults.headers.common['Content-Type'] = 'application/json';
+
 const AuthContext = createContext();
 
 // Initial state
@@ -97,13 +101,26 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (state.token) {
       setupAxiosInterceptors(state.token, dispatch);
+      
+      // Set up token auto-refresh
+      const expiresAt = localStorage.getItem('expiresAt');
+      if (expiresAt) {
+        const expiryTime = parseInt(expiresAt, 10);
+        const timeUntilRefresh = Math.max(expiryTime - new Date().getTime() - (5 * 60 * 1000), 0); // Refresh 5 minutes before expiry
+        
+        const refreshTimer = setTimeout(() => {
+          refreshToken();
+        }, timeUntilRefresh);
+        
+        return () => clearTimeout(refreshTimer);
+      }
     }
   }, [state.token]);
 
   // Check if user is authenticated on app load
   useEffect(() => {
     const checkAuth = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('t oken');
       
       if (!token) {
         dispatch({ type: 'AUTH_FAILURE', payload: 'No token found' });
@@ -150,27 +167,47 @@ export const AuthProvider = ({ children }) => {
         },
       });
       
-      const { access_token, token_type } = response.data;
+      const { access_token, token_type, user, expires_in } = response.data;
+      console.log(response.data);
       
       // Store token first
       localStorage.setItem('token', access_token);
       
+      // Store expiration time if provided
+      if (expires_in) {
+        const expiresAt = new Date().getTime() + expires_in * 1000;
+        localStorage.setItem('expiresAt', expiresAt);
+      }
+      
       // Set axios default authorization header
       axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
       
-      // Fetch user data using the token
-      const userResponse = await axios.get('/auth/me');
-      const user = userResponse.data;
+      // If user data is included in response, use it directly
+      let userData = user;
+      
+      // Otherwise fetch user data using the token
+      if (!userData) {
+        const userResponse = await axios.get('/auth/me');
+        userData = userResponse.data;
+      }
       
       dispatch({
         type: 'AUTH_SUCCESS',
         payload: {
-          user,
+          user: userData,
           token: access_token,
         },
       });
       
-      toast.success(`Welcome back, ${user.full_name || user.email}!`);
+      // Personalized welcome message based on role
+      const welcomeMessages = {
+        student: `Welcome back, ${userData.full_name || userData.email}! Ready to continue learning?`,
+        teacher: `Welcome back, Professor ${userData.full_name || userData.email}!`,
+        admin: `Welcome back, Admin ${userData.full_name || userData.email}!`,
+        mentor: `Welcome back, Mentor ${userData.full_name || userData.email}!`
+      };
+      
+      toast.success(welcomeMessages[userData.role] || `Welcome back, ${userData.full_name || userData.email}!`);
       return { success: true };
       
     } catch (error) {
@@ -192,6 +229,7 @@ export const AuthProvider = ({ children }) => {
         message = error.message;
       }
       
+      console.error('Login failed:', message);
       dispatch({ type: 'AUTH_FAILURE', payload: message });
       toast.error(message);
       return { success: false, error: message };
@@ -203,22 +241,39 @@ export const AuthProvider = ({ children }) => {
     try {
       dispatch({ type: 'AUTH_START' });
       
-      const response = await axios.post('/auth/register', userData);
+      // Transform frontend data to match backend schema
+      const registerData = {
+        email: userData.email,
+        username: userData.username || userData.email.split('@')[0], // Use email prefix as username if not provided
+        full_name: userData.full_name,
+        password: userData.password,
+        confirm_password: userData.confirmPassword || userData.password, // Convert camelCase to snake_case
+        role: userData.role || 'student',
+        teaching_subjects: userData.teaching_subjects,
+        years_experience: userData.years_experience ? parseInt(userData.years_experience) : null,
+      };
       
-      const { access_token, user } = response.data;
+      // Register the user
+      const registerResponse = await axios.post('/auth/register', registerData);
       
-      localStorage.setItem('token', access_token);
+      // Backend returns {message, user_id} but no token
+      // So we need to log the user in after successful registration
+      if (registerResponse.data.message) {
+        // Auto-login after successful registration
+        const loginResult = await login(userData.email, userData.password);
+        
+        if (loginResult.success) {
+          toast.success(`Welcome to the platform, ${userData.full_name || userData.email}!`);
+          return { success: true };
+        } else {
+          // Registration succeeded but auto-login failed
+          toast.success('Registration successful! Please log in.');
+          dispatch({ type: 'AUTH_FAILURE', payload: null });
+          return { success: true, requiresLogin: true };
+        }
+      }
       
-      dispatch({
-        type: 'AUTH_SUCCESS',
-        payload: {
-          user,
-          token: access_token,
-        },
-      });
-      
-      toast.success(`Welcome to the platform, ${user.profile?.full_name || user.email}!`);
-      return { success: true };
+      throw new Error('Registration failed - no response from server');
       
     } catch (error) {
       console.error('Registration error:', error);
@@ -229,7 +284,7 @@ export const AuthProvider = ({ children }) => {
         
         // Handle FastAPI validation errors
         if (Array.isArray(errorData.detail)) {
-          message = errorData.detail.map(err => err.msg).join(', ');
+          message = errorData.detail.map(err => `${err.loc ? err.loc.join('.') + ': ' : ''}${err.msg}`).join(', ');
         } else if (typeof errorData.detail === 'string') {
           message = errorData.detail;
         } else if (errorData.message) {
@@ -297,15 +352,24 @@ export const AuthProvider = ({ children }) => {
   // Refresh token
   const refreshToken = async () => {
     try {
-      const response = await axios.post('/auth/refresh');
-      const { access_token } = response.data;
+      const response = await axios.post('/token/refresh');
+      const { access_token, expires_in, user } = response.data;
       
       localStorage.setItem('token', access_token);
+      
+      // Update expiration time if provided
+      if (expires_in) {
+        const expiresAt = new Date().getTime() + expires_in * 1000;
+        localStorage.setItem('expiresAt', expiresAt);
+      }
+      
+      // Update user data if provided
+      const userData = user || state.user;
       
       dispatch({
         type: 'AUTH_SUCCESS',
         payload: {
-          user: state.user,
+          user: userData,
           token: access_token,
         },
       });
@@ -313,8 +377,14 @@ export const AuthProvider = ({ children }) => {
       return { success: true };
       
     } catch (error) {
-      dispatch({ type: 'LOGOUT' });
-      localStorage.removeItem('token');
+      console.error('Token refresh failed:', error);
+      // Only logout if the error is unauthorized
+      if (error.response?.status === 401) {
+        dispatch({ type: 'LOGOUT' });
+        localStorage.removeItem('token');
+        localStorage.removeItem('expiresAt');
+        toast.error('Your session has expired. Please login again.');
+      }
       return { success: false };
     }
   };

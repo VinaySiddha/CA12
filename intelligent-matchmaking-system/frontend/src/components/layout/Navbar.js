@@ -38,19 +38,51 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Navigation items for authenticated users
-  const navItems = [
+  // Base navigation items for all users
+  const baseNavItems = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
-    { name: 'Matches', href: '/matches', icon: UsersIcon },
-    { name: 'Study Groups', href: '/study-groups', icon: AcademicCapIcon },
     { name: 'Resources', href: '/resources', icon: BookOpenIcon },
-    { name: 'Feedback', href: '/feedback', icon: ChatBubbleLeftRightIcon },
+  ];
+  
+  // Student-specific navigation items
+  const studentNavItems = [
+    { name: 'Find Matches', href: '/matches', icon: UsersIcon },
+    { name: 'Study Groups', href: '/study-groups', icon: AcademicCapIcon },
+    { name: 'Submit Feedback', href: '/feedback', icon: ChatBubbleLeftRightIcon },
+  ];
+  
+  // Teacher-specific navigation items
+  const teacherNavItems = [
+    { name: 'My Students', href: '/students', icon: UsersIcon },
+    { name: 'Create Groups', href: '/create-groups', icon: AcademicCapIcon },
+    { name: 'View Feedback', href: '/view-feedback', icon: ChatBubbleLeftRightIcon },
   ];
 
   // Admin items
   const adminItems = [
-    { name: 'Admin', href: '/admin', icon: ChartBarIcon },
+    { name: 'Admin Panel', href: '/admin', icon: ChartBarIcon },
+    { name: 'User Management', href: '/admin/users', icon: UsersIcon },
+    { name: 'System Analytics', href: '/admin/analytics', icon: ChartBarIcon },
   ];
+  
+  // Determine which navigation items to display based on user role
+  const getNavItems = () => {
+    if (!user) return baseNavItems;
+    
+    const items = [...baseNavItems];
+    
+    if (user.role === 'student') {
+      return [...items, ...studentNavItems];
+    } else if (user.role === 'teacher') {
+      return [...items, ...teacherNavItems];
+    } else if (user.role === 'admin') {
+      return [...items];
+    }
+    
+    return items;
+  };
+  
+  const navItems = getNavItems();
 
   const handleLogout = async () => {
     await logout();

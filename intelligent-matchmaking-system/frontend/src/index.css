@@ -39,15 +39,15 @@
 /* Button styles - Blue buttons */
 @layer components {
   .btn-primary {
-    @apply bg-primary-500 hover:bg-primary-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200;
+    @apply bg-primary hover:bg-primary/90 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200;
   }
   
   .btn-secondary {
-    @apply bg-white hover:bg-gray-50 text-primary-500 border border-primary-500 font-semibold py-2 px-4 rounded-lg transition-colors duration-200;
+    @apply bg-white hover:bg-gray-50 text-primary border border-primary font-semibold py-2 px-4 rounded-lg transition-colors duration-200;
   }
   
   .btn-large {
-    @apply bg-primary-500 hover:bg-primary-600 text-white font-semibold py-3 px-6 rounded-lg text-lg transition-colors duration-200;
+    @apply bg-primary hover:bg-primary/90 text-white font-semibold py-3 px-6 rounded-lg text-lg transition-colors duration-200;
   }
   
   /* Clean card styling */
@@ -56,16 +56,12 @@
   }
   
   /* Text styles */
-  .text-primary {
-    @apply text-text-primary font-medium;
-  }
-  
-  .text-secondary {
-    @apply text-text-secondary font-normal;
+  .text-emphasis {
+    @apply text-primary font-medium;
   }
   
   .text-muted {
-    @apply text-text-muted font-normal;
+    @apply text-[#616b89] dark:text-white/70 font-normal;
   }
 }
 

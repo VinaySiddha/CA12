@@ -156,14 +156,14 @@ const LoginPage = () => {
               <label className="flex items-center">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 text-primary-500 bg-white border-gray-300 rounded focus:ring-primary-400/50 focus:ring-2"
+                  className="w-4 h-4 text-primary bg-white border-gray-300 rounded focus:ring-primary/50 focus:ring-2"
                 />
                 <span className="ml-2 text-sm text-gray-700">Remember me</span>
               </label>
               
               <Link
                 to="/forgot-password"
-                className="text-sm text-primary-500 hover:text-primary-600 transition-colors"
+                className="text-sm text-primary hover:text-primary/80 transition-colors"
               >
                 Forgot password?
               </Link>
@@ -192,13 +192,20 @@ const LoginPage = () => {
               <p className="text-sm text-center text-gray-600 mb-3">
                 Quick Demo Access
               </p>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 <button
                   type="button"
                   onClick={() => setFormData({ email: 'alice.johnson@university.edu', password: 'password123' })}
                   className="px-3 py-2 text-xs bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100 hover:text-gray-800 rounded-lg transition-all"
                 >
                   Student Demo
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ email: 'teacher@learntogether.edu', password: 'teacher123' })}
+                  className="px-3 py-2 text-xs bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100 hover:text-gray-800 rounded-lg transition-all"
+                >
+                  Teacher Demo
                 </button>
                 <button
                   type="button"
@@ -223,7 +230,7 @@ const LoginPage = () => {
             Don't have an account?{' '}
             <Link
               to="/register"
-              className="text-primary-500 hover:text-primary-600 transition-colors font-medium"
+              className="text-primary hover:text-primary/80 transition-colors font-medium"
             >
               Create one now
             </Link>

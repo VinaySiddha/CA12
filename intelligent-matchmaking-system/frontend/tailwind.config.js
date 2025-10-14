@@ -3,22 +3,13 @@ module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
-        // Simple blue color scheme
-        primary: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6', // Main blue for buttons
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
-        },
+        "primary": "#1349ec",
+        "background-light": "#f6f6f8",
+        "background-dark": "#101522",
         // Keep some utility colors
         secondary: {
           50: '#f9fafb',
@@ -45,7 +36,16 @@ module.exports = {
           800: '#166534',
           900: '#14532d',
           950: '#052e16',
-        },
+      },
+      fontFamily: {
+        "display": ["Manrope", "sans-serif"]
+      },
+      borderRadius: {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+      },
         // Border colors
         border: {
           light: '#e5e7eb',

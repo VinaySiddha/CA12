@@ -7,8 +7,26 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics.pairwise import cosine_similarity
 from typing import List, Dict, Tuple, Any
 import logging
+import sys
+import os
+import importlib.util
+
+# Add ml module to path
+ml_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'ml'))
+if ml_path not in sys.path:
+    sys.path.append(ml_path)
+
+# Try to import from ml module
+try:
+    from ml.recommendation_model import RecommendationModel
+    recommendation_model_imported = True
+except ImportError:
+    recommendation_model_imported = False
+    logger = logging.getLogger(__name__)
+    logger.warning("Could not import RecommendationModel from ml module. Using fallback model.")
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +38,17 @@ class MLService:
         self.success_predictor = None
         self.scaler = StandardScaler()
         self.pca = PCA(n_components=10)
+        
+        # Initialize the ML recommendation model from imported module
+        if recommendation_model_imported:
+            try:
+                self.recommendation_model = RecommendationModel()
+                logger.info("Successfully initialized RecommendationModel from ml module")
+            except Exception as e:
+                logger.error(f"Error initializing RecommendationModel: {e}")
+                self.recommendation_model = None
+        else:
+            self.recommendation_model = None
         
     def train_user_recommender(self, user_data: List[Dict]) -> bool:
         """Train user recommendation model using collaborative filtering"""
@@ -50,8 +79,38 @@ class MLService:
     
     def recommend_users(self, user_profile: Dict, n_recommendations: int = 5) -> List[Dict]:
         """Recommend users based on profile similarity"""
+        # Try the advanced ML model first
+        if self.recommendation_model is not None:
+            try:
+                # Prepare all users
+                all_users = self._get_all_users_for_model()
+                
+                # Train model if not already trained
+                if not self.recommendation_model.user_similarity_model:
+                    logger.info("Training recommendation model with advanced algorithm")
+                    trained = self.recommendation_model.train_user_similarity_model(all_users)
+                    if not trained:
+                        logger.warning("Could not train advanced recommendation model")
+                
+                # Get recommendations from the advanced model
+                if self.recommendation_model.user_similarity_model:
+                    user_id = str(user_profile.get('_id', ''))
+                    exclude_ids = [user_id]  # Exclude self
+                    
+                    recommendations = self.recommendation_model.recommend_users(
+                        user_profile, n_recommendations, exclude_ids
+                    )
+                    
+                    if recommendations:
+                        logger.info(f"Generated {len(recommendations)} recommendations using advanced model")
+                        return recommendations
+            except Exception as e:
+                logger.error(f"Error using advanced recommendation model: {e}")
+        
+        # Fallback to simple recommender
+        logger.info("Using simple recommender as fallback")
         if not self.user_recommender:
-            logger.warning("User recommender not trained")
+            logger.warning("Simple user recommender not trained")
             return []
         
         try:
@@ -83,6 +142,12 @@ class MLService:
         except Exception as e:
             logger.error(f"Error generating user recommendations: {e}")
             return []
+            
+    def _get_all_users_for_model(self) -> List[Dict]:
+        """Get all users from database to use in recommendation model
+        This is dynamically set by the matchmaking service, allowing the model
+        to work with the most up-to-date user data."""
+        return []  # Dynamically overridden by matchmaking service
     
     def train_topic_recommender(self, interaction_data: List[Dict]) -> bool:
         """Train topic recommendation model"""

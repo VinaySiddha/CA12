@@ -267,27 +267,58 @@ class MatchmakingService:
         
         # Get all users for training data
         all_users = []
-        async for u in users_collection.find({"is_active": True}):
+        async for u in users_collection.find({"is_active": True, "_id": {"$ne": ObjectId(user_id)}}):
+            # Convert ObjectId to string for ML model compatibility
+            u["_id"] = str(u["_id"])
             all_users.append(u)
         
-        # Train the ML model if not already trained
+        # Ensure we have the user's ObjectId as string for ML model
+        user_copy = user.copy()
+        user_copy["_id"] = str(user_copy["_id"])
+            
+        # Set all users in the ML service for the recommendation model
+        ml_service._get_all_users_for_model = lambda: all_users
+        
+        # Train the ML model if not already trained (fallback model)
         if not ml_service.user_recommender:
-            success = ml_service.train_user_recommender(all_users)
-            if not success:
+            success = ml_service.train_user_recommender(all_users + [user_copy])
+            if not success and ml_service.recommendation_model is None:
                 return []
         
         # Get ML recommendations
-        recommendations = ml_service.recommend_users(user, limit)
+        recommendations = ml_service.recommend_users(user_copy, limit)
         
-        # Convert recommendations to user data
+        # Process the recommendations based on their format
         results = []
+        
+        # Check if we're using the advanced model (with user_id) or simple model (with user_index)
         for rec in recommendations:
-            if rec["user_index"] < len(all_users):
-                recommended_user = all_users[rec["user_index"]]
-                recommended_user["id"] = str(recommended_user.pop("_id"))
-                recommended_user["ml_score"] = rec["similarity_score"]
-                recommended_user["rank"] = rec["rank"]
-                results.append(recommended_user)
+            if "user_id" in rec:  # Advanced model
+                # Find the user in our all_users list
+                recommended_user = next((u for u in all_users if str(u.get("_id")) == rec["user_id"]), None)
+                
+                if recommended_user:
+                    # Format for consistency with the UI expectations
+                    user_data = recommended_user.copy()
+                    user_data["id"] = user_data.get("_id")
+                    if "_id" in user_data:
+                        del user_data["_id"]
+                    user_data["ml_score"] = rec["similarity_score"]
+                    
+                    # Add match reasons if available
+                    if "match_reasons" in rec:
+                        user_data["match_reasons"] = rec["match_reasons"]
+                        
+                    results.append(user_data)
+            elif "user_index" in rec:  # Simple model
+                if rec["user_index"] < len(all_users):
+                    recommended_user = all_users[rec["user_index"]].copy()
+                    recommended_user["id"] = recommended_user.get("_id")
+                    if "_id" in recommended_user:
+                        del recommended_user["_id"]
+                    recommended_user["ml_score"] = rec["similarity_score"]
+                    recommended_user["rank"] = rec["rank"]
+                    results.append(recommended_user)
         
         return results
 

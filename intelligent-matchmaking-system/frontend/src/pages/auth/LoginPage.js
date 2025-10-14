@@ -195,20 +195,30 @@ const LoginPage = () => {
               <p className="text-sm text-white/60 text-center mb-3">
                 Quick Demo Access
               </p>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 <button
                   type="button"
-                  onClick={() => setFormData({ email: 'alice.johnson@university.edu', password: 'password123' })}
-                  className="px-3 py-2 text-xs bg-white/5 border border-white/20 rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition-all"
+                  onClick={() => setFormData({ email: 'student.demo@example.com', password: 'password123' })}
+                  className="px-3 py-2 text-xs bg-gradient-to-r from-blue-500/20 to-blue-600/20 border border-blue-400/30 rounded-lg text-white/80 hover:bg-blue-500/20 hover:text-white hover:border-blue-400/50 transition-all flex flex-col items-center"
                 >
-                  Student Demo
+                  <span>Student Demo</span>
+                  <span className="text-[10px] text-blue-300/70">Learner Account</span>
                 </button>
                 <button
                   type="button"
-                  onClick={() => setFormData({ email: 'admin@learntogether.com', password: 'admin123' })}
-                  className="px-3 py-2 text-xs bg-white/5 border border-white/20 rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition-all"
+                  onClick={() => setFormData({ email: 'teacher.demo@example.com', password: 'password123' })}
+                  className="px-3 py-2 text-xs bg-gradient-to-r from-purple-500/20 to-purple-600/20 border border-purple-400/30 rounded-lg text-white/80 hover:bg-purple-500/20 hover:text-white hover:border-purple-400/50 transition-all flex flex-col items-center"
                 >
-                  Admin Demo
+                  <span>Teacher Demo</span>
+                  <span className="text-[10px] text-purple-300/70">Educator Account</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ email: 'admin.demo@example.com', password: 'password123' })}
+                  className="px-3 py-2 text-xs bg-gradient-to-r from-amber-500/20 to-amber-600/20 border border-amber-400/30 rounded-lg text-white/80 hover:bg-amber-500/20 hover:text-white hover:border-amber-400/50 transition-all flex flex-col items-center"
+                >
+                  <span>Admin Demo</span>
+                  <span className="text-[10px] text-amber-300/70">System Admin</span>
                 </button>
               </div>
             </div>

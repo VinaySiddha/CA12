@@ -244,7 +244,7 @@ const Profile = () => {
       >
         <h1 className="text-4xl md:text-5xl font-bold text-black mb-4">
           Your{' '}
-          <span className="text-primary-500">
+          <span className="text-primary">
             Profile
           </span>
         </h1>
@@ -436,13 +436,13 @@ const Profile = () => {
                   {profileData.interests.map((interest, index) => (
                     <span
                       key={index}
-                      className="px-3 py-1 rounded-full bg-primary-500/20 text-primary-300 text-sm border border-primary-400/30 flex items-center"
+                      className="px-3 py-1 rounded-full bg-primary/20 text-primary text-sm border border-primary/30 flex items-center"
                     >
                       {interest}
                       {isEditing && (
                         <button
                           onClick={() => removeTag('interests', index)}
-                          className="ml-2 text-primary-300 hover:text-black"
+                          className="ml-2 text-primary hover:text-black"
                         >
                           <XMarkIcon className="w-3 h-3" />
                         </button>
@@ -611,7 +611,7 @@ const Profile = () => {
                 </p>
                 
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-primary-400">{stats.points}</div>
+                  <div className="text-2xl font-bold text-primary">{stats.points}</div>
                   <div className="text-gray-500 text-sm">Total Points</div>
                 </div>
               </div>
