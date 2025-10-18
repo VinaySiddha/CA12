@@ -1,9 +1,28 @@
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
+
 const RegisterPage = () => {
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    // The 'data' object is already validated by the schema
+    try {
+        const result = await registerAuth(data); // Assuming 'register' from useAuth is named registerAuth
+        if (result.success) {
+            navigate('/dashboard');
+        }
+    } catch (error) {
+      // Error is already handled by your useAuth context
+    } finally {
+        setIsLoading(false);
+    }
+};
+
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     // Step 1: Basic Info

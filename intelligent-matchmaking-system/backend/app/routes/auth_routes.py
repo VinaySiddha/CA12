@@ -92,7 +92,24 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         ]
     })
     
-    if not user or not verify_password(form_data.password, user["hashed_password"]):
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    try:
+        password_valid = verify_password(form_data.password, user["hashed_password"])
+    except Exception as e:
+        logger.error(f"Password verification error for user {user.get('username')}: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication error. Please try resetting your password.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    if not password_valid:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",

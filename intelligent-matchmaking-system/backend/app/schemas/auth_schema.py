@@ -1,7 +1,7 @@
 """
 Authentication schemas for request/response validation
 """
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, validator
 from typing import Optional, List
 
 
@@ -28,6 +28,12 @@ class TokenData(BaseModel):
 class LoginRequest(BaseModel):
     username: str
     password: str
+    
+    @validator('password')
+    def validate_password(cls, v):
+        if len(v.encode('utf-8')) > 72:
+            raise ValueError('Password is too long (maximum 72 bytes)')
+        return v
 
 
 class RegisterRequest(BaseModel):
@@ -39,6 +45,14 @@ class RegisterRequest(BaseModel):
     role: str = "student"  # "student" or "teacher"
     teaching_subjects: Optional[List[str]] = None
     years_experience: Optional[int] = None
+    
+    @validator('password')
+    def validate_password(cls, v):
+        if len(v.encode('utf-8')) > 72:
+            raise ValueError('Password is too long (maximum 72 bytes)')
+        if len(v) < 6:
+            raise ValueError('Password must be at least 6 characters long')
+        return v
 
 
 class PasswordResetRequest(BaseModel):
@@ -48,6 +62,14 @@ class PasswordResetRequest(BaseModel):
 class PasswordResetConfirm(BaseModel):
     token: str
     new_password: str
+    
+    @validator('new_password')
+    def validate_password(cls, v):
+        if len(v.encode('utf-8')) > 72:
+            raise ValueError('Password is too long (maximum 72 bytes)')
+        if len(v) < 6:
+            raise ValueError('Password must be at least 6 characters long')
+        return v
 
 
 class EmailVerificationRequest(BaseModel):

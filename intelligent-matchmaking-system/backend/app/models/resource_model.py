@@ -64,9 +64,10 @@ class Resource(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     
-    # Visibility
+    # Visibility and connections
     is_active: bool = Field(default=True, description="Whether resource is visible")
     is_featured: bool = Field(default=False, description="Featured resource")
+    linked_meetings: List[PyObjectId] = Field(default_factory=list, description="Meeting IDs this resource is linked to")
     
     class Config:
         populate_by_name = True

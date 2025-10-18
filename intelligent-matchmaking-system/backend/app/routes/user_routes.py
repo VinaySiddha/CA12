@@ -18,6 +18,13 @@ async def get_user_profile(current_user: dict = Depends(get_current_active_user)
     """Get current user's profile"""
     user_data = current_user.copy()
     user_data["id"] = str(user_data.pop("_id"))
+    
+    # Ensure all required fields exist with defaults
+    user_data.setdefault("is_verified", False)
+    user_data.setdefault("points", 0)
+    user_data.setdefault("level", 1)
+    user_data.setdefault("badges", [])
+    
     return user_data
 
 
@@ -48,6 +55,13 @@ async def update_user_profile(
     # Get updated user
     updated_user = await users_collection.find_one({"_id": current_user["_id"]})
     updated_user["id"] = str(updated_user.pop("_id"))
+    
+    # Ensure all required fields exist with defaults
+    updated_user.setdefault("is_verified", False)
+    updated_user.setdefault("points", 0)
+    updated_user.setdefault("level", 1)
+    updated_user.setdefault("badges", [])
+    
     return updated_user
 
 
@@ -74,6 +88,12 @@ async def get_public_profile(user_id: str):
         )
     
     user["id"] = str(user.pop("_id"))
+    
+    # Ensure all required fields exist with defaults
+    user.setdefault("points", 0)
+    user.setdefault("level", 1)
+    user.setdefault("badges", [])
+    
     return user
 
 
@@ -123,9 +143,12 @@ async def search_users(
     
     users = await cursor.to_list(length=limit)
     
-    # Convert ObjectId to string
+    # Convert ObjectId to string and add default fields
     for user in users:
         user["id"] = str(user.pop("_id"))
+        user.setdefault("points", 0)
+        user.setdefault("level", 1)
+        user.setdefault("badges", [])
     
     return users
 
@@ -170,9 +193,12 @@ async def get_available_mentors(
     
     mentors = await cursor.to_list(length=limit)
     
-    # Convert ObjectId to string
+    # Convert ObjectId to string and add default fields
     for mentor in mentors:
         mentor["id"] = str(mentor.pop("_id"))
+        mentor.setdefault("points", 0)
+        mentor.setdefault("level", 1)
+        mentor.setdefault("badges", [])
     
     return mentors
 

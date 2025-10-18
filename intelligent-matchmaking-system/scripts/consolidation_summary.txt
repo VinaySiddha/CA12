@@ -1,0 +1,14 @@
+CONSOLIDATION SUMMARY
+Generated: Sat, Oct 18, 2025  6:54:09 PM
+Output File: consolidated_codebase.txt
+File Size: 2.6M
+Total Lines: 67655
+
+Files Included:
+Python files: 5306
+JavaScript files: 38433
+CSS files: 31
+HTML files: 37
+JSON files: 6
+Markdown files: 2856
+Configuration files: 269

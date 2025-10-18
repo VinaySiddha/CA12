@@ -22,9 +22,10 @@ import { useAuth } from '../context/AuthContext';
 import GlassCard from '../components/ui/GlassCard';
 import GlassButton from '../components/ui/GlassButton';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
+import toast from 'react-hot-toast';
 
 const Profile = () => {
-  const { user, updateProfile } = useAuth();
+  const { user, updateUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
     full_name: '',
@@ -164,14 +165,17 @@ const Profile = () => {
     try {
       setSaving(true);
       
-      // Simulate API call
-      setTimeout(() => {
-        updateProfile(profileData);
+      const result = await updateUser(profileData);
+      if (result.success) {
         setIsEditing(false);
-        setSaving(false);
-      }, 1000);
+        toast.success('Profile updated successfully');
+      } else {
+        toast.error('Failed to update profile');
+      }
     } catch (error) {
       console.error('Error updating profile:', error);
+      toast.error('Failed to update profile');
+    } finally {
       setSaving(false);
     }
   };

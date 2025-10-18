@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 const Profile = () => {
-  const { user, updateUserProfile } = useAuth();
+  const { user, updateUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -12,6 +12,7 @@ const Profile = () => {
     bio: user?.bio || '',
     educational_level: user?.educational_level || '',
     field_of_study: user?.field_of_study || '',
+    institution: user?.institution || '',
     learning_style: user?.learning_style || '',
     interests: user?.interests || [],
   });
@@ -92,9 +93,33 @@ const Profile = () => {
     setIsLoading(true);
     
     try {
-      await updateUserProfile(formData);
-      toast.success('Profile updated successfully');
-      setIsEditing(false);
+      // Structure the data to match backend schema
+      const updateData = {
+        full_name: formData.full_name,
+        profile: {
+          bio: formData.bio,
+          academic_level: formData.educational_level,
+          field_of_study: formData.field_of_study,
+          learning_preferences: [formData.learning_style],
+          institution: formData.institution,
+          timezone: 'UTC',
+          languages: ['English']
+        },
+        skills: {
+          interests: formData.interests,
+          strengths: [],
+          weaknesses: [],
+          expertise_level: {}
+        }
+      };
+      
+      const result = await updateUser(updateData);
+      if (result.success) {
+        toast.success('Profile updated successfully');
+        setIsEditing(false);
+      } else {
+        toast.error('Failed to update profile');
+      }
     } catch (error) {
       toast.error(error.message || 'Failed to update profile');
     } finally {
@@ -268,6 +293,19 @@ const Profile = () => {
                       <option key={field} value={field}>{field}</option>
                     ))}
                   </select>
+                </div>
+                
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="institution" className="text-sm font-medium">Institution</label>
+                  <input
+                    id="institution"
+                    name="institution"
+                    type="text"
+                    value={formData.institution}
+                    onChange={handleChange}
+                    placeholder="University or Institution name"
+                    className="w-full px-4 py-2 rounded-lg border border-[#dbdee6]/30 dark:border-[#dbdee6]/10 bg-white/50 dark:bg-black/20 text-[#111318] dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  />
                 </div>
                 
                 <div className="flex flex-col gap-2">

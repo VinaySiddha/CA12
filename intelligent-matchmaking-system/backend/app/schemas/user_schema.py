@@ -46,14 +46,14 @@ class UserResponse(BaseModel):
     username: str
     full_name: str
     is_active: bool
-    is_verified: bool
+    is_verified: Optional[bool] = False
     role: str
     profile: Optional[UserProfileCreate] = None
     skills: Optional[UserSkillsCreate] = None
-    points: int
-    level: int
-    badges: List[str]
-    created_at: datetime
+    points: Optional[int] = 0
+    level: Optional[int] = 1
+    badges: Optional[List[str]] = []
+    created_at: Optional[datetime] = None
     last_login: Optional[datetime] = None
 
 
@@ -73,6 +73,6 @@ class UserPublicProfile(BaseModel):
     full_name: str
     profile: Optional[UserProfileCreate] = None
     skills: Optional[UserSkillsCreate] = None
-    points: int
-    level: int
-    badges: List[str]
+    points: Optional[int] = 0
+    level: Optional[int] = 1
+    badges: Optional[List[str]] = []
