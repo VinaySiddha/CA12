@@ -1,0 +1,158 @@
+@startuml IntelligentMatchmakingPlatform_ClassDiagram
+title 🧠 Intelligent Matchmaking Platform - Class Diagram
+
+skinparam class {
+  BackgroundColor White
+  ArrowColor Black
+  BorderColor #333
+}
+
+' ======================
+' MAIN ENTITIES
+' ======================
+
+class User {
+  + user_id: ObjectId
+  + name: string
+  + email: string
+  + password_hash: string
+  + role: string  'student | teacher | admin
+  + expertise: [string]
+  + interests: [string]
+  + bio: string
+  + profile_pic: string
+  + created_at: datetime
+  + updated_at: datetime
+  --
+  + matchWithExpert(): Match
+  + getRecommendations(): [User]
+}
+
+class Match {
+  + match_id: ObjectId
+  + student_id: ObjectId
+  + teacher_id: ObjectId
+  + compatibility_score: float
+  + matched_on: datetime
+  + status: string  'active | completed | rejected
+  --
+  + calculateScore(): float
+  + updateStatus(status: string)
+}
+
+class Resource {
+  + resource_id: ObjectId
+  + uploader_id: ObjectId
+  + title: string
+  + description: string
+  + tags: [string]
+  + file_path: string
+  + uploaded_on: datetime
+  --
+  + uploadFile()
+  + getByTag(tag: string): [Resource]
+}
+
+class Meeting {
+  + meeting_id: ObjectId
+  + match_id: ObjectId
+  + scheduled_time: datetime
+  + meeting_link: string
+  + agenda: string
+  + status: string  'upcoming | completed | cancelled
+  --
+  + schedule()
+  + cancel()
+}
+
+class ChatMessage {
+  + message_id: ObjectId
+  + conversation_id: ObjectId
+  + sender_id: ObjectId
+  + message_text: string
+  + sent_at: datetime
+  --
+  + sendMessage()
+}
+
+class Conversation {
+  + conversation_id: ObjectId
+  + participants: [ObjectId]
+  + created_at: datetime
+  --
+  + addMessage(message: ChatMessage)
+}
+
+class Notification {
+  + notification_id: ObjectId
+  + user_id: ObjectId
+  + message: string
+  + type: string
+  + created_at: datetime
+  + read: boolean
+  --
+  + markAsRead()
+}
+
+class StudyGroup {
+  + group_id: ObjectId
+  + name: string
+  + members: [ObjectId]
+  + topics: [string]
+  + created_at: datetime
+  --
+  + addMember(user_id: ObjectId)
+  + removeMember(user_id: ObjectId)
+}
+
+class Post {
+  + post_id: ObjectId
+  + author_id: ObjectId
+  + content: string
+  + created_at: datetime
+  + likes: int
+  + comments: [Comment]
+  --
+  + addComment(comment: Comment)
+}
+
+class Comment {
+  + comment_id: ObjectId
+  + author_id: ObjectId
+  + text: string
+  + created_at: datetime
+}
+
+' ======================
+' ML/AI CLASSES
+' ======================
+
+class ExpertMatchingModel {
+  + train(data)
+  + predict(user_profile): [User]
+  + calculateSimilarity(u1, u2): float
+}
+
+class RecommendationModel {
+  + recommendResources(user_id): [Resource]
+  + recommendExperts(user_id): [User]
+}
+
+' ======================
+' RELATIONSHIPS
+' ======================
+
+User "1" --> "*" Match : student/teacher
+Match "1" --> "1" Meeting : schedules >
+User "1" --> "*" Resource : uploads >
+User "1" --> "*" Notification : receives >
+User "1" --> "*" Conversation : participates >
+Conversation "1" --> "*" ChatMessage : contains >
+User "1" --> "*" StudyGroup : joins >
+StudyGroup "1" --> "*" Post : posts >
+Post "1" --> "*" Comment : has >
+
+Match --> ExpertMatchingModel : uses >
+User --> RecommendationModel : uses >
+
+@enduml

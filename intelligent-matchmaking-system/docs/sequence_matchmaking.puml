@@ -1,0 +1,35 @@
+@startuml IntelligentMatchmakingPlatform_SequenceDiagram
+title 🎯 Expert Matchmaking Flow - Sequence Diagram
+
+actor Student
+participant "Frontend (React)" as FE
+participant "Backend (FastAPI)" as BE
+participant "MatchmakingService" as MS
+participant "ExpertMatchingModel (ML)" as ML
+database "MongoDB" as DB
+
+Student -> FE : Click "Find Expert"
+FE -> BE : POST /api/match/find { student_id }
+
+BE -> MS : initiateMatch(student_id)
+
+MS -> DB : getUserProfile(student_id)
+DB --> MS : return user_profile
+
+MS -> ML : predict(user_profile)
+ML --> MS : return matched_teachers[] + scores[]
+
+MS -> DB : saveMatchRecords(student_id, matched_teachers)
+DB --> MS : confirmation
+
+MS --> BE : match_results
+BE --> FE : JSON response (matched experts list)
+FE --> Student : Display recommended experts
+
+note right of Student
+Student sees matched experts 
+with compatibility scores and
+can initiate chat or schedule meeting.
+end note
+
+@enduml

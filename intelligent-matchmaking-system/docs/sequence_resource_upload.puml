@@ -1,0 +1,26 @@
+@startuml ResourceUploadFlow
+title 📚 Resource Upload Flow
+
+actor Student
+participant "Frontend (React)" as FE
+participant "Backend (FastAPI)" as BE
+participant "ResourceService" as RS
+database "MongoDB + GridFS" as DB
+
+Student -> FE : Choose file + click "Upload Resource"
+FE -> BE : POST /api/resources/upload (file + metadata)
+BE -> RS : handleUpload(file, metadata)
+RS -> DB : storeFile(file)
+DB --> RS : return file_id
+RS -> DB : saveMetadata(uploader_id, title, tags, file_id)
+DB --> RS : confirmation
+RS --> BE : success response
+BE --> FE : JSON { message: "Upload Successful" }
+FE --> Student : Show "Resource Uploaded" + refresh list
+
+note right of Student
+Student can now view the uploaded resource 
+in their dashboard with tags and title.
+end note
+
+@enduml

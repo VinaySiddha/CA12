@@ -1,0 +1,25 @@
+@startuml ChatFlow
+title 💬 Chat Flow - Real-Time Messaging
+
+actor Student
+actor Teacher
+participant "Frontend (React)" as FE
+participant "Backend (FastAPI + WebSocket)" as BE
+participant "ChatService" as CS
+database "MongoDB" as DB
+
+Student -> FE : Type message
+FE -> BE : emit('send_message', {conversation_id, sender_id, message})
+BE -> CS : handleSendMessage(conversation_id, message)
+CS -> DB : saveMessage(conversation_id, message)
+DB --> CS : confirmation
+CS -> BE : broadcast message event
+BE --> FE : emit('receive_message', message)
+FE --> Teacher : Display message instantly
+
+note right of Teacher
+The teacher sees the message in real time.
+No page reload needed.
+end note
+
+@enduml

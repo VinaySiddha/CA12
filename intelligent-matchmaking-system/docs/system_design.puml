@@ -1,0 +1,94 @@
+@startuml IntelligentMatchmakingPlatform_SystemDesign
+title 🧠 Intelligent Matchmaking Platform - System Design Overview
+
+skinparam rectangle {
+  BackgroundColor White
+  BorderColor #333
+  FontColor Black
+  FontStyle Bold
+  RoundCorner 15
+}
+
+skinparam cloud {
+  BackgroundColor #EAF4FF
+  BorderColor #007BFF
+}
+
+skinparam database {
+  BackgroundColor #E8F5E9
+  BorderColor #388E3C
+}
+
+skinparam component {
+  BackgroundColor #FFF8E1
+  BorderColor #FFA000
+}
+
+skinparam arrow {
+  Color Black
+  FontSize 13
+}
+
+' =======================
+' COMPONENTS
+' =======================
+
+actor Student
+actor Teacher
+
+rectangle "Frontend (React.js)" as FE {
+  component "Dashboard" as Dashboard
+  component "Matchmaking UI" as MatchUI
+  component "Chat UI" as ChatUI
+  component "Resource Manager" as ResourceUI
+  component "Meeting Scheduler" as MeetingUI
+}
+
+rectangle "Backend (FastAPI)" as BE {
+  component "Auth & User API"
+  component "Matchmaking API"
+  component "Chat API"
+  component "Resource API"
+  component "Meeting API"
+  component "Notification API"
+}
+
+rectangle "ML/AI Layer" as ML {
+  component "Expert Matching Model\n(TF-IDF + Cosine)"
+  component "Recommendation Model"
+}
+
+database "MongoDB + GridFS" as DB
+
+cloud "External Integrations" as EXT {
+  component "Email / Notification Service"
+  component "Video Meeting API\n(Google Meet / Zoom)"
+}
+
+' =======================
+' DATA FLOW
+' =======================
+
+Student --> Dashboard : Login / View Matches
+Teacher --> Dashboard : Login / View Requests
+
+Dashboard --> "Auth & User API" : Authentication / Profile Fetch
+MatchUI --> "Matchmaking API" : Find Experts / Get Matches
+ChatUI --> "Chat API" : Real-Time Messaging
+ResourceUI --> "Resource API" : Upload / Download Files
+MeetingUI --> "Meeting API" : Schedule / Join Meetings
+
+"Matchmaking API" --> "Expert Matching Model\n(TF-IDF + Cosine)" : Compute Compatibility
+"Expert Matching Model\n(TF-IDF + Cosine)" --> DB : Read user profiles
+"Matchmaking API" --> DB : Save match results
+
+"Resource API" --> DB : Store metadata + files (GridFS)
+"Chat API" --> DB : Save messages / conversations
+"Meeting API" --> DB : Save meeting details
+"Notification API" --> DB : Log notifications
+
+"Meeting API" --> EXT : Create Meeting Link
+"Notification API" --> EXT : Send Email / Push Notification
+
+@enduml
+

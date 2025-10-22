@@ -1,0 +1,28 @@
+@startuml MeetingSchedulingFlow
+title 📅 Meeting Scheduling Flow
+
+actor Student
+participant "Frontend (React)" as FE
+participant "Backend (FastAPI)" as BE
+participant "MeetingService" as MS
+participant "NotificationService" as NS
+database "MongoDB" as DB
+
+Student -> FE : Click "Schedule Meeting"
+FE -> BE : POST /api/meetings/schedule { match_id, time }
+BE -> MS : scheduleMeeting(match_id, time)
+MS -> DB : saveMeeting(match_id, time, link)
+DB --> MS : confirmation
+MS -> NS : sendNotification(teacher_id, "Meeting Scheduled")
+NS -> DB : saveNotification(user_id, message)
+DB --> NS : confirmation
+MS --> BE : meeting details
+BE --> FE : JSON { link, time, status }
+FE --> Student : Show meeting confirmation + link
+
+note right of Student
+Student receives the meeting link 
+and both teacher and student get notifications.
+end note
+
+@enduml

@@ -1,0 +1,117 @@
+
+@startuml IntelligentMatchmakingPlatform
+
+title 🧠 Intelligent Matchmaking Platform - UML Architecture Diagram
+
+skinparam componentStyle rectangle
+skinparam rectangle {
+  BackgroundColor<<frontend>> #CFE2FF
+  BackgroundColor<<backend>> #E2E3E5
+  BackgroundColor<<ml>> #FFF3CD
+  BackgroundColor<<database>> #D1E7DD
+}
+
+' ===========================
+' FRONTEND
+' ===========================
+package "Frontend (React 18.2.0)" <<frontend>> {
+  [Dashboard (Student/Teacher)]
+  [Matches (Expert Match)]
+  [Resources (Upload/Download)]
+  [Chat (Student-Teacher)]
+  [Study Groups]
+  [Social Feed]
+  [Meeting Schedule]
+  [Notifications]
+}
+
+' ===========================
+' BACKEND
+' ===========================
+package "Backend (FastAPI)" <<backend>> {
+  [Auth API]
+  [User API]
+  [Matchmaking API]
+  [Resource API]
+  [Meeting API]
+  [Chat API]
+  [Notification API]
+  [Social API]
+  [ML API]
+  
+  package "Business Logic Layer" {
+    [MatchmakingService]
+    [ResourceService]
+    [MeetingService]
+    [ChatService]
+    [NotificationService]
+  }
+}
+
+' ===========================
+' ML/AI SERVICES
+' ===========================
+package "ML/AI Services" <<ml>> {
+  [ExpertMatchingModel]
+  [RecommendationModel]
+  [TopicClassifier]
+  [FeedbackPredictor]
+}
+
+' ===========================
+' DATABASE
+' ===========================
+package "Database (MongoDB 6.0+)" <<database>> {
+  [users]
+  [matches]
+  [resources]
+  [meetings]
+  [study_groups]
+  [posts]
+  [conversations]
+  [chat_messages]
+  [notifications]
+  [GridFS]
+}
+
+' ===========================
+' RELATIONSHIPS
+' ===========================
+
+' Frontend to Backend
+[Dashboard (Student/Teacher)] --> [User API]
+[Matches (Expert Match)] --> [Matchmaking API]
+[Resources (Upload/Download)] --> [Resource API]
+[Chat (Student-Teacher)] --> [Chat API]
+[Study Groups] --> [Social API]
+[Social Feed] --> [Social API]
+[Meeting Schedule] --> [Meeting API]
+[Notifications] --> [Notification API]
+
+' Backend to Business Logic
+[Matchmaking API] --> [MatchmakingService]
+[Resource API] --> [ResourceService]
+[Meeting API] --> [MeetingService]
+[Chat API] --> [ChatService]
+[Notification API] --> [NotificationService]
+
+' Business Logic to ML
+[MatchmakingService] --> [ExpertMatchingModel]
+[MatchmakingService] --> [RecommendationModel]
+[NotificationService] --> [FeedbackPredictor]
+
+' Backend to Database
+[User API] --> [users]
+[MatchmakingService] --> [matches]
+[ResourceService] --> [resources]
+[MeetingService] --> [meetings]
+[ChatService] --> [conversations]
+[ChatService] --> [chat_messages]
+[NotificationService] --> [notifications]
+[ResourceService] --> [GridFS]
+
+' ML models use data from DB
+[ExpertMatchingModel] --> [users]
+[RecommendationModel] --> [matches]
+
+@enduml

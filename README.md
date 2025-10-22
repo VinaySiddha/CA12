@@ -176,13 +176,96 @@ cd frontend && npm install
 ```
 
 ---
+    
+## 📚 Documentation:
+---
 
-## 📞 Support & Resources
+## 🏗️ Architecture Diagram
 
-### **Documentation:**
-- API Docs: http://localhost:8000/docs
-- Architecture: [ARCHITECTURE.md](./ARCHITECTURE.md)
-- Quick Start: [QUICK-START.md](./QUICK-START.md)
+![Architecture Diagram](intelligent-matchmaking-system/docs/images/architecture.png)
+
+### **Overview**
+- **Frontend (React 18)** handles dashboards, matchmaking, chat, meetings, and resources.
+- **Backend (FastAPI)** provides REST APIs for authentication, matchmaking, resources, and chat.
+- **ML/AI Layer** performs matchmaking and recommendations using NLP techniques.
+- **MongoDB** stores all data (users, matches, meetings, resources).
+- **GridFS** stores uploaded files (resources).
+- **External Services** include email notifications and video meeting integrations.
+
+---
+
+## 📘 Class Diagram
+
+![Class Diagram](intelligent-matchmaking-system/docs/images/class_diagram.png)
+
+### **Entity Highlights**
+| Class | Description |
+|-------|--------------|
+| `User` | Student/Teacher data with expertise and interests. |
+| `Match` | Stores compatibility scores between student–teacher pairs. |
+| `Resource` | Files uploaded by users (stored via GridFS). |
+| `Meeting` | Scheduled between matched users. |
+| `ChatMessage` | Real-time conversation records. |
+| `Notification` | Tracks system alerts and updates. |
+| `ExpertMatchingModel` | Uses TF-IDF + Cosine similarity for matchmaking. |
+
+---
+
+## 🔄 Sequence Diagrams
+
+### 1️⃣ Expert Matchmaking Flow
+![Matchmaking Sequence](intelligent-matchmaking-system/docs/images/match_making.png)
+
+**Steps:**
+1. Student requests matchmaking.  
+2. Backend fetches user data from DB.  
+3. ML model computes compatibility with experts.  
+4. Matches are stored and returned to frontend.
+
+---
+
+### 2️⃣ Resource Upload Flow
+![Resource Upload](intelligent-matchmaking-system/docs/images/ResourceUploadFlow.png)
+
+**Steps:**
+1. Student uploads resource → FastAPI Resource API.  
+2. Stored in **MongoDB GridFS** with metadata.  
+3. Confirmation and updated list shown in frontend.
+
+---
+
+### 3️⃣ Chat Flow
+![Chat Flow](intelligent-matchmaking-system/docs/images/ChatFlow.png)
+
+**Steps:**
+1. Student sends message through WebSocket.  
+2. FastAPI Chat Service stores message → MongoDB.  
+3. Broadcasts message in real-time to the receiver.
+
+---
+
+### 4️⃣ Meeting Scheduling Flow
+![Meeting Flow](intelligent-matchmaking-system/docs/images/MeetingSchedulingFlow.png)
+
+**Steps:**
+1. Student schedules a meeting via frontend.  
+2. FastAPI saves meeting details → MongoDB.  
+3. Notification service sends meeting link to both users.
+
+---
+
+## 🧩 System Design Overview
+
+![System Design](intelligent-matchmaking-system/docs/images/design.png)
+
+### **System Flow**
+1. **Frontend (React.js)** – Student & Teacher interact via intuitive UI.  
+2. **Backend (FastAPI)** – Handles all API requests and connects services.  
+3. **ML Layer** – Performs intelligent matchmaking and recommendations.  
+4. **Database (MongoDB + GridFS)** – Stores structured data and resources.  
+5. **Integrations** – Sends email/meeting notifications through external APIs.
+
+---
 
 ### **Demo Credentials:**
 - Student: student@example.com / student123
